@@ -7,6 +7,7 @@
 var app = require("../app");
 var debug = require("debug")("expressexample:server");
 var http = require("http");
+var child_process = require("child_process");
 
 /**
  * Get port from environment and store in Express.
@@ -67,8 +68,12 @@ function onError(error) {
       process.exit(1);
       break;
     case "EADDRINUSE":
-      console.error(bind + " is already in use");
-      process.exit(1);
+      // console.error(bind + " is already in use");
+      console.log("already:)");
+      child_process.exec("fuser -k 8000/tcp");
+      // child_process.exec("ls");
+      // process.exit(1);
+      return;
       break;
     default:
       throw error;
