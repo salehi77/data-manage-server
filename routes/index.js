@@ -27,7 +27,7 @@ router.get("/get_clinics", function(req, res, next) {
   });
 });
 
-router.get("/get_clinic_description", function(req, res, next) {
+router.get("/get_clinic", function(req, res, next) {
   console.log(req.query);
 
   if (!req.query.id) {
