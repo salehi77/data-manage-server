@@ -17,6 +17,10 @@ db.on("open", () => {
 //   console.log(res);
 // });
 
+router.get("/", (req, res) => {
+  res.send("Hello");
+});
+
 router.get("/get_clinics", function(req, res, next) {
   ClinicModel.find((err, result) => {
     if (err) {
