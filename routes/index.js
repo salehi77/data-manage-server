@@ -18,7 +18,7 @@ db.on("open", () => {
 // });
 
 router.get("/", (req, res) => {
-  res.send("Hello");
+  res.send({ dddd: "ikkk" });
 });
 
 router.get("/get_clinics", function(req, res, next) {
