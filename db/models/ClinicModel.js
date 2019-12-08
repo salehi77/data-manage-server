@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const ClinicSchema = new mongoose.Schema({
   name: String,
-  lastUpdate: Date,
-  description: String,
-  algorithm: Object
+  lastUpdate: { type: Date, default: Date.now },
+  description: { type: String, default: "" },
+  diagramModel: { type: Object, default: {} }
 });
 
 const ClinicModel = mongoose.model("Clinic", ClinicSchema);
