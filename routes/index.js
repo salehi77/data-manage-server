@@ -75,33 +75,24 @@ router.patch("/update_diagram", (req, res, next) => {
 
 router.post("/add_clinic", (req, res, next) => {
 
-  console.log(req.body)
+  if (!req.body.clinicName) {
+    return next(getErrorObject("MissedArgument"));
+  }
 
-  res.status(200).send('kkkkkkkkkkk')
+  const clinic = new ClinicModel({
+    name: req.body.clinicName,
+    lastUpdate: Date.now(),
+    description: ""
+  });
+  clinic.save((err, result) => {
+    if (err) {
+      return next(err)
+    }
+    else {
+      res.status(201).send({ success: true, result: result })
+    }
+  });
 
-
-  // if (!req.body.id) {
-  //   return next(getErrorObject("MustHaveID"));
-  // }
-  // if (!req.body.diagramModel) {
-  //   return next(getErrorObject("MissedArgument"));
-  // }
-
-  // ClinicModel.findOneAndUpdate(
-  //   { _id: req.body.id },
-  //   { diagramModel: req.body.diagramModel, lastUpdate: Date.now() },
-  //   (err, result) => {
-  //     if (err) {
-  //       return next(err);
-  //     }
-  //     if (!result) {
-  //       return next(getErrorObject("ClinicNotFound"));
-  //     } else {
-  //       res.status(200).send({ success: true, result: result });
-  //       return;
-  //     }
-  //   }
-  // );
 });
 
 router.use(function (err, req, res, next) {
