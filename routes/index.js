@@ -95,6 +95,31 @@ router.post("/add_clinic", (req, res, next) => {
 
 });
 
+
+router.delete("/delete_clinic", (req, res, next) => {
+
+  console.log(req.query)
+
+  if (!req.query.id) {
+    return next(getErrorObject("MustHaveID"));
+  }
+
+  ClinicModel.findOneAndRemove(
+    { _id: req.query.id },
+    (err, result) => {
+      if (err) {
+        return next(err);
+      }
+      if (!result) {
+        return next(getErrorObject("ClinicNotFound"));
+      } else {
+        return res.status(200).send({ success: true, result: result });
+      }
+    }
+  );
+
+});
+
 router.use(function (err, req, res, next) {
   if (err.type === 1) {
     res.status(err.status).send(err);
