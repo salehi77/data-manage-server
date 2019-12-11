@@ -5,7 +5,7 @@ mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useUnifiedTopology", true);
 
-const mongoDB = "mongodb://user:password1@ds053479.mlab.com:53479/heal";
+const mongoDB = process.env.MONGODB_URI || "mongodb://user:password1@ds053479.mlab.com:53479/heal";
 
 let db;
 
