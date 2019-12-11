@@ -17,11 +17,6 @@ db.on("open", () => {
 //   console.log(res);
 // });
 
-
-console.log('*******************************************************')
-console.log(process.env)
-console.log('*******************************************************')
-
 router.get("/", (req, res) => {
   res.send({ dddd: "ikkk" });
 });
