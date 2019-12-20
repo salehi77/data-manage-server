@@ -1,15 +1,14 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
 
 const db = require("./db/connection");
-var indexRouter = require("./routes/index");
+const clinicRoute = require("./routes/clinicRoute");
 
-var app = express();
+const app = express();
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -20,16 +19,21 @@ app.use(cors());
 
 ///////////////////////////////////////////////////////////////
 
+
+
 db.on("open", () => {
   console.log("app.js");
 });
 
+
+
 ///////////////////////////////////////////////////////////////
 
-app.use("/", indexRouter);
+app.use("/", clinicRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+  console.log('88888888888')
   next(createError(404));
 });
 

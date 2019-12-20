@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const db = require("../db/connection");
 
 const { getClinics, getClinic, updateDiagram, deleteClinic, addClinic } = require('../api/controllers')
@@ -50,15 +50,20 @@ router.delete("/delete_clinic",
 
 
 router.use(function (err, req, res, next) {
-  if (err.type === 1) {
-    res.status(err.status).send(err);
-  } else {
-    if (err.name === "CastError") {
-      res.status(400).send({ success: false, error: "BadID" });
-    } else {
-      res.status(500).send({ success: false, error: "InternalError" });
+  if (err) {
+    if (err.type === 1) {
+      return res.status(err.status).send(err);
+    }
+    else {
+      if (err.name === "CastError") {
+        return res.status(400).send({ success: false, error: "BadID" });
+      }
+      else {
+        return res.status(500).send({ success: false, error: "InternalError" });
+      }
     }
   }
+  return res.status(500).send({ success: false, error: "InternalError" });
 });
 
 
