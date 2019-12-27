@@ -25,17 +25,60 @@ router.get("/", (req, res) => {
 
 router.get("/get_clinics", (req, res, next) => {
   handleClinic.getAll()
-    .then(results => {
-      console.log(results)
-      res.send(results)
+    .then(result => {
+      res.send({ success: true, result })
     })
-    .catch(err => {
-      console.log(err)
-      res.status(500).send(err)
+    .catch(error => {
+      res.status(500).send({ success: false, error })
     })
-  // res.send('ppp')
-}
-);
+});
+
+
+
+router.post("/add_clinic", (req, res, next) => {
+
+  if (!req.body.clinicName) {
+    return res.status(400).send('MissedArgument')
+  }
+
+  handleClinic.create(req.body.clinicName)
+    .then(result => {
+      return result
+    })
+    .then(({ id }) => {
+      return handleClinic.getById(id)
+    })
+    .then(result => {
+      res.status(201).send({ success: true, result })
+    })
+    .catch(error => {
+      res.status(500).send({ success: false, error })
+    })
+});
+
+
+router.delete("/delete_clinic", (req, res, next) => {
+
+  if (!req.query.id) {
+    return res.status(400).send('MustHaveID')
+  }
+
+
+  handleClinic.delete(req.query.id)
+    .then(result => {
+      return result
+    })
+    .then(({ id }) => {
+      return handleClinic.getById(id)
+    })
+    .then(result => {
+      res.status(201).send({ success: true, result: { id: parseInt(req.query.id) } })
+    })
+    .catch(error => {
+      res.status(500).send({ success: false, error })
+    })
+
+});
 
 
 router.get("/get_clinic",
@@ -48,14 +91,9 @@ router.patch("/update_diagram",
 );
 
 
-router.post("/add_clinic",
-  // addClinic
-);
 
 
-router.delete("/delete_clinic",
-  // deleteClinic
-);
+
 router.use(function (err, req, res, next) {
   if (err) {
     if (err.type === 1) {
