@@ -9,14 +9,16 @@ class ClinicRepository {
     const sql = `
     CREATE TABLE IF NOT EXISTS clinics (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT)`
+      clinicName TEXT,
+      diagramModel TEXT)
+    `
     return this.dao.run(sql)
   }
 
-  create(name) {
+  create(name, diagramModel = '') {
     return this.dao.run(
-      'INSERT INTO clinics (name) VALUES (?)',
-      [name])
+      'INSERT INTO clinics (clinicName, diagramModel) VALUES (?, ?)',
+      [name, diagramModel])
   }
 
   update(project) {

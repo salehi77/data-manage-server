@@ -5,13 +5,13 @@ const { handleClinic } = require('../database/handleTables')
 // const { getClinics, getClinic, updateDiagram, deleteClinic, addClinic } = require('../api/controllers')
 
 const f = () => {
-  handleClinic.create('jjjjjjj')
-    .then(res => {
-      console.log(res)
+  handleClinic.create('third')
+    .then(data => {
+      console.log(data)
     })
     .catch(err => {
       console.log(err)
-      handleClinic.createTable().then(() => f()).catch(e => { })
+      // handleClinic.createTable().then(() => f()).catch(e => { })
     })
 }
 // f()
@@ -23,8 +23,18 @@ router.get("/", (req, res) => {
 });
 
 
-router.get("/get_clinics",
-  // getClinics
+router.get("/get_clinics", (req, res, next) => {
+  handleClinic.getAll()
+    .then(results => {
+      console.log(results)
+      res.send(results)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).send(err)
+    })
+  // res.send('ppp')
+}
 );
 
 
