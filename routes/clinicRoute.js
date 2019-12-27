@@ -1,22 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db/connection");
+const { handleClinic } = require('../database/handleTables')
 
-const { getClinics, getClinic, updateDiagram, deleteClinic, addClinic } = require('../api/controllers')
+// const { getClinics, getClinic, updateDiagram, deleteClinic, addClinic } = require('../api/controllers')
 
-db.on("open", () => {
-  console.log("index.js");
-});
+const f = () => {
+  handleClinic.create('jjjjjjj')
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+      handleClinic.createTable().then(() => f()).catch(e => { })
+    })
+}
+// f()
 
-// const kidney = new ClinicModel({
-//   name: "kidney7",
-//   lastUpdate: Date.now(),
-//   description: "6666666666666666"
-// });
-// kidney.save((err, res) => {
-//   if (err) return console.error(err);
-//   console.log(res);
-// });
+
 
 router.get("/", (req, res) => {
   res.send({ dddd: "ikkk" });
@@ -24,31 +24,28 @@ router.get("/", (req, res) => {
 
 
 router.get("/get_clinics",
-  getClinics
+  // getClinics
 );
 
 
 router.get("/get_clinic",
-  getClinic
+  // getClinic
 );
 
 
 router.patch("/update_diagram",
-  updateDiagram
+  // updateDiagram
 );
 
 
 router.post("/add_clinic",
-  addClinic
+  // addClinic
 );
 
 
 router.delete("/delete_clinic",
-  deleteClinic
+  // deleteClinic
 );
-
-
-
 router.use(function (err, req, res, next) {
   if (err) {
     if (err.type === 1) {

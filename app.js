@@ -4,11 +4,9 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
-
-const db = require("./db/connection");
-const clinicRoute = require("./routes/clinicRoute");
-
 const app = express();
+const clinicRouter = require('./routes/clinicRoute')
+require('./database/handleTables')
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -17,23 +15,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-///////////////////////////////////////////////////////////////
 
 
 
-db.on("open", () => {
-  console.log("app.js");
-});
 
 
+app.use(clinicRouter)
 
-///////////////////////////////////////////////////////////////
-
-app.use("/", clinicRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  console.log('88888888888')
+  console.log('not found')
   next(createError(404));
 });
 
