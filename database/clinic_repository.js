@@ -21,11 +21,11 @@ class ClinicRepository {
       [name, diagramModel])
   }
 
-  update(project) {
-    const { id, name } = project
+  update(clinic) {
+    const { id, diagramModel } = clinic
     return this.dao.run(
-      `UPDATE clinics SET name = ? WHERE id = ?`,
-      [name, id]
+      `UPDATE clinics SET diagramModel = ? WHERE id = ?`,
+      [diagramModel, id]
     )
   }
 
