@@ -10,22 +10,23 @@ class ClinicRepository {
     CREATE TABLE IF NOT EXISTS clinics (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       clinicName TEXT,
-      diagramModel TEXT)
-    `
+      diagramModel TEXT,
+      diagramParsed TEXT
+    )`
     return this.dao.run(sql)
   }
 
-  create(name, diagramModel = '') {
+  create(name, diagramModel = '', diagramParsed = '') {
     return this.dao.run(
-      'INSERT INTO clinics (clinicName, diagramModel) VALUES (?, ?)',
-      [name, diagramModel])
+      'INSERT INTO clinics (clinicName, diagramModel, diagramParsed) VALUES (?, ?, ?)',
+      [name, diagramModel, diagramParsed])
   }
 
   update(clinic) {
-    const { id, diagramModel } = clinic
+    const { id, diagramModel, diagramParsed } = clinic
     return this.dao.run(
-      `UPDATE clinics SET diagramModel = ? WHERE id = ?`,
-      [diagramModel, id]
+      `UPDATE clinics SET diagramModel = ?, diagramParsed = ? WHERE id = ?`,
+      [diagramModel, diagramParsed, id]
     )
   }
 

@@ -98,24 +98,58 @@ router.patch("/update_diagram", (req, res, next) => {
   if (!req.body.id) {
     return res.status(400).send('MustHaveID')
   }
-  if (!req.body.diagramModel) {
+  if (!req.body.diagramModel || !req.body.rootID) {
     return res.status(400).send('MissedArgument');
   }
 
 
 
-  handleClinic.update({ id: req.body.id, diagramModel: req.body.diagramModel })
+  let newDiagramModel = { rootID: req.body.rootID, diagramModel: req.body.diagramModel }
+
+
+
+  let jmodel = JSON.parse(req.body.diagramModel)
+
+  let tree = {
+    ID: req.body.rootID,
+    name: jmodel.nodes.find(node => node.id === req.body.rootID).name,
+    childs: model2tree(jmodel, req.body.rootID)
+  };
+
+
+
+  handleClinic.update({ id: req.body.id, diagramModel: JSON.stringify(newDiagramModel), diagramParsed: JSON.stringify(tree) })
     .then(result => {
-      console.log(result)
       res.send({ success: true, result })
     })
     .catch(error => {
-      console.log(error)
       res.status(500).send({ success: false, error })
     })
 
 });
 
+
+const model2tree = (jmodel, nodeID) => {
+
+  let t = jmodel.links.filter((link, i) => link.source === nodeID);
+
+  if (t.length === 0) {
+    return [];
+  }
+
+  t = t.map(tt => {
+    return { targetID: tt.target };
+  });
+
+  t = t.map(tt => {
+    let s = jmodel.nodes.find(ss => {
+      return ss.id === tt.targetID;
+    });
+    return { id: s.id, name: s.name, childs: model2tree(jmodel, s.id) };
+  });
+
+  return t;
+};
 
 
 
