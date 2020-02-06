@@ -18,4 +18,4 @@ const ct = async () => {
 
 ct()
 
-module.exports = { handleClinic: clinicRepo }
+module.exports = { ClinicTable: clinicRepo }

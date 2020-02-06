@@ -1,30 +1,29 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { handleClinic } = require('../database/handleTables')
+const { ClinicTable } = require('../database/handleTables')
 
-// const { getClinics, getClinic, updateDiagram, deleteClinic, addClinic } = require('../api/controllers')
 
 const f = () => {
-  handleClinic.create('third')
+  ClinicTable.create('third')
     .then(data => {
       console.log(data)
     })
     .catch(err => {
       console.log(err)
-      // handleClinic.createTable().then(() => f()).catch(e => { })
+      // ClinicTable.createTable().then(() => f()).catch(e => { })
     })
 }
 // f()
 
 
 
-router.get("/", (req, res) => {
-  res.send({ dddd: "ikkk" });
+router.get('/', (req, res) => {
+  res.send({ dddd: 'ikkk' });
 });
 
 
-router.get("/get_clinics", (req, res, next) => {
-  handleClinic.getAll()
+router.get('/get_clinics', (req, res, next) => {
+  ClinicTable.getAll()
     .then(result => {
       res.send({ success: true, result })
     })
@@ -35,18 +34,23 @@ router.get("/get_clinics", (req, res, next) => {
 
 
 
-router.post("/add_clinic", (req, res, next) => {
+router.post('/add_clinic', (req, res, next) => {
 
   if (!req.body.clinicName) {
     return res.status(400).send('MissedArgument')
   }
+  if (!req.body.diagramModel || !req.body.diagramTree) {
+    return res.status(400).send('MissedArgument');
+  }
 
-  handleClinic.create(req.body.clinicName)
+  const { clinicName, diagramModel, diagramTree } = req.body
+
+  ClinicTable.create(clinicName, JSON.stringify(diagramModel), JSON.stringify(diagramTree))
     .then(result => {
       return result
     })
     .then(({ id }) => {
-      return handleClinic.getById(id)
+      return ClinicTable.getById(id)
     })
     .then(result => {
       res.send({ success: true, result })
@@ -57,14 +61,14 @@ router.post("/add_clinic", (req, res, next) => {
 });
 
 
-router.delete("/delete_clinic", (req, res, next) => {
+router.delete('/delete_clinic', (req, res, next) => {
 
   if (!req.query.id) {
     return res.status(400).send('MustHaveID')
   }
 
 
-  handleClinic.delete(req.query.id)
+  ClinicTable.delete(req.query.id)
     .then(result => {
       return result
     })
@@ -78,47 +82,35 @@ router.delete("/delete_clinic", (req, res, next) => {
 });
 
 
-router.get("/get_clinic", (req, res, next) => {
+router.get('/get_clinic', (req, res, next) => {
   if (!req.query.id) {
     return res.status(400).send('MustHaveID')
   }
-
-  handleClinic.getById(req.query.id)
+  ClinicTable.getById(req.query.id)
     .then(result => {
-      res.send({ success: true, result })
+      if (result === undefined)
+        res.status(400).send({ success: false, result: 'NotFound' })
+      else
+        res.send({ success: true, result })
     })
     .catch(error => {
       res.status(500).send({ success: false, error })
     })
-
 });
 
 
-router.patch("/update_diagram", (req, res, next) => {
+router.patch('/save_diagram', (req, res, next) => {
   if (!req.body.id) {
     return res.status(400).send('MustHaveID')
   }
-  if (!req.body.diagramModel || !req.body.rootID) {
+  if (!req.body.diagramModel || !req.body.diagramTree) {
     return res.status(400).send('MissedArgument');
   }
 
+  const { id, diagramModel, diagramTree } = req.body
 
 
-  let newDiagramModel = { rootID: req.body.rootID, diagramModel: req.body.diagramModel }
-
-
-
-  let jmodel = JSON.parse(req.body.diagramModel)
-
-  let tree = {
-    ID: req.body.rootID,
-    name: jmodel.nodes.find(node => node.id === req.body.rootID).name,
-    childs: model2tree(jmodel, req.body.rootID)
-  };
-
-
-
-  handleClinic.update({ id: req.body.id, diagramModel: JSON.stringify(newDiagramModel), diagramParsed: JSON.stringify(tree) })
+  ClinicTable.update({ id, diagramModel: JSON.stringify(diagramModel), diagramTree: JSON.stringify(diagramTree) })
     .then(result => {
       res.send({ success: true, result })
     })
@@ -129,27 +121,6 @@ router.patch("/update_diagram", (req, res, next) => {
 });
 
 
-const model2tree = (jmodel, nodeID) => {
-
-  let t = jmodel.links.filter((link, i) => link.source === nodeID);
-
-  if (t.length === 0) {
-    return [];
-  }
-
-  t = t.map(tt => {
-    return { targetID: tt.target };
-  });
-
-  t = t.map(tt => {
-    let s = jmodel.nodes.find(ss => {
-      return ss.id === tt.targetID;
-    });
-    return { id: s.id, name: s.name, childs: model2tree(jmodel, s.id) };
-  });
-
-  return t;
-};
 
 
 
@@ -160,28 +131,28 @@ router.use(function (err, req, res, next) {
       return res.status(err.status).send(err);
     }
     else {
-      if (err.name === "CastError") {
-        return res.status(400).send({ success: false, error: "BadID" });
+      if (err.name === 'CastError') {
+        return res.status(400).send({ success: false, error: 'BadID' });
       }
       else {
-        return res.status(500).send({ success: false, error: "InternalError" });
+        return res.status(500).send({ success: false, error: 'InternalError' });
       }
     }
   }
-  return res.status(500).send({ success: false, error: "InternalError" });
+  return res.status(500).send({ success: false, error: 'InternalError' });
 });
 
 
 function getErrorObject(error) {
   switch (error) {
-    case "MustHaveID":
-      return { type: 1, status: 400, success: false, error: "MustHaveID" };
-    case "ClinicNotFound":
-      return { type: 1, status: 404, success: false, error: "ClinicNotFound" };
-    case "MissedArgument":
-      return { type: 1, status: 400, success: false, error: "MissedArgument" };
+    case 'MustHaveID':
+      return { type: 1, status: 400, success: false, error: 'MustHaveID' };
+    case 'ClinicNotFound':
+      return { type: 1, status: 404, success: false, error: 'ClinicNotFound' };
+    case 'MissedArgument':
+      return { type: 1, status: 400, success: false, error: 'MissedArgument' };
     default:
-      return { type: 1, status: 500, success: false, error: "InternalError" };
+      return { type: 1, status: 500, success: false, error: 'InternalError' };
   }
 }
 
