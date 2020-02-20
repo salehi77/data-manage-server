@@ -48,4 +48,4 @@ class ClinicRepository {
   }
 }
 
-module.exports = ClinicRepository;
+module.exports = ClinicRepository

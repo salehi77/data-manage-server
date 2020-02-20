@@ -1,5 +1,5 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const { ClinicTable } = require('../database/handleTables')
 
 
@@ -18,8 +18,8 @@ const f = () => {
 
 
 router.get('/', (req, res) => {
-  res.send({ dddd: 'ikkk' });
-});
+  res.send({ dddd: 'ikkk' })
+})
 
 
 router.get('/get_clinics', (req, res, next) => {
@@ -30,7 +30,7 @@ router.get('/get_clinics', (req, res, next) => {
     .catch(error => {
       res.status(500).send({ success: false, error })
     })
-});
+})
 
 
 
@@ -40,7 +40,7 @@ router.post('/add_clinic', (req, res, next) => {
     return res.status(400).send('MissedArgument')
   }
   if (!req.body.diagramModel || !req.body.diagramTree) {
-    return res.status(400).send('MissedArgument');
+    return res.status(400).send('MissedArgument')
   }
 
   const { clinicName, diagramModel, diagramTree } = req.body
@@ -58,7 +58,7 @@ router.post('/add_clinic', (req, res, next) => {
     .catch(error => {
       res.status(500).send({ success: false, error })
     })
-});
+})
 
 
 router.delete('/delete_clinic', (req, res, next) => {
@@ -79,7 +79,7 @@ router.delete('/delete_clinic', (req, res, next) => {
       res.status(500).send({ success: false, error })
     })
 
-});
+})
 
 
 router.get('/get_clinic', (req, res, next) => {
@@ -96,7 +96,7 @@ router.get('/get_clinic', (req, res, next) => {
     .catch(error => {
       res.status(500).send({ success: false, error })
     })
-});
+})
 
 
 router.patch('/save_diagram', (req, res, next) => {
@@ -104,7 +104,7 @@ router.patch('/save_diagram', (req, res, next) => {
     return res.status(400).send('MustHaveID')
   }
   if (!req.body.diagramModel || !req.body.diagramTree) {
-    return res.status(400).send('MissedArgument');
+    return res.status(400).send('MissedArgument')
   }
 
   const { id, diagramModel, diagramTree } = req.body
@@ -118,7 +118,7 @@ router.patch('/save_diagram', (req, res, next) => {
       res.status(500).send({ success: false, error })
     })
 
-});
+})
 
 
 
@@ -128,33 +128,33 @@ router.patch('/save_diagram', (req, res, next) => {
 router.use(function (err, req, res, next) {
   if (err) {
     if (err.type === 1) {
-      return res.status(err.status).send(err);
+      return res.status(err.status).send(err)
     }
     else {
       if (err.name === 'CastError') {
-        return res.status(400).send({ success: false, error: 'BadID' });
+        return res.status(400).send({ success: false, error: 'BadID' })
       }
       else {
-        return res.status(500).send({ success: false, error: 'InternalError' });
+        return res.status(500).send({ success: false, error: 'InternalError' })
       }
     }
   }
-  return res.status(500).send({ success: false, error: 'InternalError' });
-});
+  return res.status(500).send({ success: false, error: 'InternalError' })
+})
 
 
 function getErrorObject(error) {
   switch (error) {
     case 'MustHaveID':
-      return { type: 1, status: 400, success: false, error: 'MustHaveID' };
+      return { type: 1, status: 400, success: false, error: 'MustHaveID' }
     case 'ClinicNotFound':
-      return { type: 1, status: 404, success: false, error: 'ClinicNotFound' };
+      return { type: 1, status: 404, success: false, error: 'ClinicNotFound' }
     case 'MissedArgument':
-      return { type: 1, status: 400, success: false, error: 'MissedArgument' };
+      return { type: 1, status: 400, success: false, error: 'MissedArgument' }
     default:
-      return { type: 1, status: 500, success: false, error: 'InternalError' };
+      return { type: 1, status: 500, success: false, error: 'InternalError' }
   }
 }
 
 
-module.exports = router;
+module.exports = router
